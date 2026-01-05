@@ -29,45 +29,48 @@ public class PairMatchingRunner {
             outputView.printFunctionSelectGuide();
             function = inputView.readFunction();
             if (function.equals("1")) { // 1번 페어 매칭을 선택한 경우
-                MissionInfoDto missionInfoDto = readMissionInfo(); // 미션 정보 입력 받기
-
-                // 기존에 해당조합으로 맺어진 페어가 있는지 확인
-                boolean isExist = pairMatchingService.isExistByCourseAndLevelAndMission(
-                        Course.of(missionInfoDto.getCourse()),
-                        Level.of(missionInfoDto.getLevel()),
-                        Mission.of(missionInfoDto.getMission(), Level.of(missionInfoDto.getLevel())));
-
-                boolean isRematch = false;
-                if (isExist) { // 있다면, 다시 매칭할거냐고 물어보기
-                    isRematch = readRematchFlag();
-                }
-
-                if (isRematch || !isExist) { // 다시 매칭하거나 아예 새로 매칭하는 경우
-                    PairMatchingDto pairMatchingDto = pairMatchingService.createPairMatching(
-                            Course.of(missionInfoDto.getCourse()),
-                            Level.of(missionInfoDto.getLevel()),
-                            Mission.of(missionInfoDto.getMission(), Level.of(missionInfoDto.getLevel())),
-                            isRematch
-                    ); // 매치 생성
-                    // 생성된 매치 출력
-                    outputView.printMatchingResult(pairMatchingDto);
-                }
+                pairMatch();
             } else if (function.equals("2")) {
-                MissionInfoDto missionInfoDto = readMissionInfo(); // 미션 정보 입력
-
-                PairMatchingDto pairMatchingDto = pairMatchingService.findByCourseAndLevelAndMission(
-                        Course.of(missionInfoDto.getCourse()),
-                        Level.of(missionInfoDto.getLevel()),
-                        Mission.of(missionInfoDto.getMission(), Level.of(missionInfoDto.getLevel()))
-                ); // 해당 과정, 레벨, 미션 조합의 페어매칭 조회
-                outputView.printMatchingResult(pairMatchingDto); // 출력
-
+                viewPairMatch();
             } else if (function.equals("3")) {
-                pairMatchingService.initializePairMatching();
-                outputView.printInitDone();
+                initPairMatch();
             }
             outputView.printNewLine();
         }
+    }
+
+    private void pairMatch() {
+        MissionInfoDto missionInfoDto = readMissionInfo(); // 미션 정보 입력 받기
+        // 기존에 해당조합으로 맺어진 페어가 있는지 확인
+        Course course = Course.of(missionInfoDto.getCourse());
+        Level level = Level.of(missionInfoDto.getLevel());
+        Mission mission = Mission.of(missionInfoDto.getMission(), level);
+        boolean isExist = pairMatchingService.isExistByCourseAndLevelAndMission(course, level, mission);
+
+        boolean isRematch = false;
+        if (isExist) { // 있다면, 다시 매칭할거냐고 물어보기
+            isRematch = readRematchFlag();
+        }
+        if (isRematch || !isExist) { // 다시 매칭하거나 아예 새로 매칭하는 경우
+            PairMatchingDto pairMatchingDto = pairMatchingService.createPairMatching(course, level, mission, isRematch); // 매치 생성
+            outputView.printMatchingResult(pairMatchingDto); // 생성된 매치 출력
+        }
+    }
+
+    private void viewPairMatch() {
+        MissionInfoDto missionInfoDto = readMissionInfo(); // 미션 정보 입력
+
+        PairMatchingDto pairMatchingDto = pairMatchingService.findByCourseAndLevelAndMission(
+                Course.of(missionInfoDto.getCourse()),
+                Level.of(missionInfoDto.getLevel()),
+                Mission.of(missionInfoDto.getMission(), Level.of(missionInfoDto.getLevel()))
+        ); // 해당 과정, 레벨, 미션 조합의 페어매칭 조회
+        outputView.printMatchingResult(pairMatchingDto); // 출력
+    }
+
+    private void initPairMatch() {
+        pairMatchingService.initializePairMatching();
+        outputView.printInitDone();
     }
 
     private MissionInfoDto readMissionInfo() {
