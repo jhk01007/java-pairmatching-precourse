@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static pairmatching.util.ErrorMessage.NO_MATCHING_NUMBER_OF_CASE_ERROR;
+import static pairmatching.util.ErrorMessage.PAIR_MATCHING_NOT_FOUND_ERROR;
 
 public class PairMatchingService {
 
@@ -35,13 +36,6 @@ public class PairMatchingService {
     }
 
     /**
-     * 해당 조합 삭제
-     */
-    public void deleteByCourseAndLevelAndMission(Course course, Level level, Mission mission) {
-        pairMatchingRepository.deleteByCourseAndLevelAndMission(course, level, mission);
-    }
-
-    /**
      * 새로운 페어 매칭 생성
      */
     public PairMatchingDto createPairMatching(Course course, Level level, Mission mission, boolean isRematch) {
@@ -63,7 +57,7 @@ public class PairMatchingService {
         pairMatchingRepository.save(new PairMatching(newPairList, course, level, mission));
 
         // DTO 반환
-        return new PairMatchingDto(createPairMatchingDto(newPairList));
+        return createPairMatchingDto(newPairList);
     }
 
     private List<Crew> pairCrew(Level level, List<Crew> crews) {
@@ -89,7 +83,7 @@ public class PairMatchingService {
         throw new IllegalArgumentException(NO_MATCHING_NUMBER_OF_CASE_ERROR.getMessage());
     }
 
-    private static List<List<String>> createPairMatchingDto(List<Pair> newPairList) {
+    private static PairMatchingDto createPairMatchingDto(List<Pair> newPairList) {
         List<List<String>> pairMatchingResults = new ArrayList<>(); // 페어 매칭 결과(목록)
         for (Pair newPair : newPairList) {
             List<String> crewNamesInPair = new ArrayList<>();
@@ -98,6 +92,16 @@ public class PairMatchingService {
             }
             pairMatchingResults.add(crewNamesInPair);
         }
-        return pairMatchingResults;
+        return new PairMatchingDto(pairMatchingResults);
+    }
+
+    /**
+     * 특정 과정, 레벨, 미션 조합의 페어 매칭 찾기
+     */
+    public PairMatchingDto findByCourseAndLevelAndMission(Course course, Level level, Mission mission) {
+        PairMatching pairMatching = pairMatchingRepository.findByCourseAndLevelAndMission(course, level, mission)
+                .orElseThrow(() -> new IllegalArgumentException(PAIR_MATCHING_NOT_FOUND_ERROR.getMessage()));
+
+        return createPairMatchingDto(pairMatching.getPairs());
     }
 }
