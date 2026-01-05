@@ -3,6 +3,7 @@ package pairmatching.util;
 import pairmatching.dto.MissionInfoDto;
 
 import static pairmatching.util.ErrorMessage.MISSION_INFO_FORMAT_ERROR;
+import static pairmatching.util.ErrorMessage.REMATCH_FLAG_FORMAT_ERROR;
 
 public class InputParser {
 
@@ -15,5 +16,17 @@ public class InputParser {
         String level = split[1].trim();
         String mission = split[2].trim();
         return new MissionInfoDto(course, level, mission);
+    }
+
+    public static boolean parseRematchFlag(String rematchFlag) {
+
+        if("네".equals(rematchFlag)) {
+            return true;
+        }
+        if("아니오".equals(rematchFlag)) {
+            return false;
+        }
+
+        throw new IllegalArgumentException(REMATCH_FLAG_FORMAT_ERROR.getMessage());
     }
 }

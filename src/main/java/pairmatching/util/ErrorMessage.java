@@ -5,6 +5,7 @@ public enum ErrorMessage {
     COURSE_FORMAT_ERROR("존재하지 않는 Course 타입 입니다."),
     LEVEL_FORMAT_ERROR("존재하지 않는 Level 타입 입니다."),
     MISSION_FORMAT_ERROR("존재하지 않는 Mission 타입 입니다."),
+    REMATCH_FLAG_FORMAT_ERROR("네, 아니오로만 입력해주세요."),
 
     ;
 

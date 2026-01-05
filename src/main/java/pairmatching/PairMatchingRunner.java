@@ -4,23 +4,21 @@ import pairmatching.domain.Course;
 import pairmatching.domain.Level;
 import pairmatching.domain.Mission;
 import pairmatching.dto.MissionInfoDto;
-import pairmatching.repo.PairMatchingRepository;
 import pairmatching.util.InputParser;
 import pairmatching.view.InputView;
 import pairmatching.view.OutputView;
 
-import static pairmatching.util.ErrorMessage.MISSION_INFO_FORMAT_ERROR;
 
 public class PairMatchingRunner {
 
     private final InputView inputView;
     private final OutputView outputView;
-    private final PairMatchingRepository pairMatchingRepository;
+    private final PairMatchingService pairMatchingService;
 
-    public PairMatchingRunner(InputView inputView, OutputView outputView, PairMatchingRepository pairMatchingRepository) {
+    public PairMatchingRunner(InputView inputView, OutputView outputView, PairMatchingService pairMatchingService) {
         this.inputView = inputView;
         this.outputView = outputView;
-        this.pairMatchingRepository = pairMatchingRepository;
+        this.pairMatchingService = pairMatchingService;
     }
 
     public void run() {
@@ -37,11 +35,23 @@ public class PairMatchingRunner {
             // TODO: 실제 존재하는 과정, 레벨, 미션인지 검증
 
             // 기존에 해당조합으로 맺어진 페어가 있는지 확인
-            boolean isExist = pairMatchingRepository.isExistByCourseAndLevelAndMission(
+            boolean isExist = pairMatchingService.isExistByCourseAndLevelAndMission(
                     Course.of(missionInfoDto.getCourse()),
                     Level.of(missionInfoDto.getLevel()),
-                    Mission.of(missionInfoDto.getMission(), Level.of(missionInfoDto.getLevel()))
-            );
+                    Mission.of(missionInfoDto.getMission(), Level.of(missionInfoDto.getLevel())));
+
+            boolean isRematch = false;
+            if(isExist) { // 있다면, 다시 매칭할거냐고 물어보기
+                isRematch = InputParser.parseRematchFlag(inputView.readRematching());
+            }
+            if(isRematch) {
+               pairMatchingService.deleteByCourseAndLevelAndMission(
+                       Course.of(missionInfoDto.getCourse()),
+                       Level.of(missionInfoDto.getLevel()),
+                       Mission.of(missionInfoDto.getMission(), Level.of(missionInfoDto.getLevel())));// 기존꺼 삭제
+            }
+
+            // 매치 생성
 
 
 
