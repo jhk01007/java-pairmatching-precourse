@@ -33,6 +33,24 @@ class PairMatchingRepositoryTest {
         assertThat(isExist).isEqualTo(result);
     }
 
+    @Test
+    @DisplayName("특정 Course, Level, Mission 조합의 페어 매칭을 삭제한다.")
+    public void deleteByCourseAndLevelAndMission() throws Exception {
+        // given
+        Course course = Course.BACKEND;
+        Level level = Level.LEVEL1;
+        Mission mission = Mission.LOTTO;
+        initPairMatch(course, level, mission);
+        boolean beforeDelete = pairMatchingRepository.isExistByCourseAndLevelAndMission(course, level, mission);
+
+        // when
+        pairMatchingRepository.deleteByCourseAndLevelAndMission(course, level, mission);
+
+        // then
+        boolean afterDelete = pairMatchingRepository.isExistByCourseAndLevelAndMission(course, level, mission);
+        assertThat(beforeDelete).isTrue();
+        assertThat(afterDelete).isFalse();
+    }
     private void initPairMatch(Course course, Level level, Mission mission) {
         Crew crew1 = new Crew(course, "crew1");
         Crew crew2 = new Crew(course, "crew2");
