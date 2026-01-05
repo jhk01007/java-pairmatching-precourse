@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class CrewRepository {
 
@@ -42,17 +43,20 @@ public class CrewRepository {
         return BACKEND_FILE_PATH;
     }
 
-    private List<Crew> loadBackendAll() {
-        try (BufferedReader br = Files.newBufferedReader(Paths.get(BACKEND_FILE_PATH), StandardCharsets.UTF_8)) {
-            List<Crew> crews = new ArrayList<>();
-            String line;
-            while ((line = br.readLine()) != null) {
-                if (line.isEmpty()) continue;
-                crews.add(new Crew(Course.BACKEND, line));
+    public Optional<Crew> findByName(String name) {
+        List<Crew> frontEnd = loadAll(Course.FRONTEND);
+        List<Crew> backEnd = loadAll(Course.BACKEND);
+
+        for (Crew crew : frontEnd) {
+            if(crew.getName().equals(name)) {
+                return Optional.of(crew);
             }
-            return crews;
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
+        for (Crew crew : backEnd) {
+            if(crew.getName().equals(name)) {
+                return Optional.of(crew);
+            }
+        }
+        return Optional.empty();
     }
 }

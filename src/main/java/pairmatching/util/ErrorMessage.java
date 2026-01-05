@@ -7,7 +7,9 @@ public enum ErrorMessage {
     MISSION_FORMAT_ERROR("존재하지 않는 Mission 타입 입니다."),
     REMATCH_FLAG_FORMAT_ERROR("네, 아니오로만 입력해주세요."),
     NO_MATCHING_NUMBER_OF_CASE_ERROR("매칭할 수 있는 경우의 수가 없습니다."),
-    PAIR_MATCHING_NOT_FOUND_ERROR("매칭 이력이 없습니다.")
+    PAIR_MATCHING_NOT_FOUND_ERROR("매칭 이력이 없습니다."),
+    CREW_NOT_FOUND_ERROR("존재하지 않는 Crew입니다."),
+
     ;
 
 

@@ -28,10 +28,10 @@ public class PairMatchingRunner {
         while (!function.equals("Q")) {
             outputView.printFunctionSelectGuide();
             function = inputView.readFunction();
+            System.out.println();
             if (function.equals("1")) { // 1번 페어 매칭을 선택한 경우
                 String missionInfo = inputView.readMissionInfo(); // 과정, 레벨, 미션 입력
                 MissionInfoDto missionInfoDto = InputParser.parseMissionInfo(missionInfo);
-                // TODO: 실제 존재하는 과정, 레벨, 미션인지 검증
 
                 // 기존에 해당조합으로 맺어진 페어가 있는지 확인
                 boolean isExist = pairMatchingService.isExistByCourseAndLevelAndMission(

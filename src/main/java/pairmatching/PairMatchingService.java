@@ -8,9 +8,9 @@ import pairmatching.repo.PairMatchingRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
-import static pairmatching.util.ErrorMessage.NO_MATCHING_NUMBER_OF_CASE_ERROR;
-import static pairmatching.util.ErrorMessage.PAIR_MATCHING_NOT_FOUND_ERROR;
+import static pairmatching.util.ErrorMessage.*;
 
 public class PairMatchingService {
 
@@ -47,10 +47,36 @@ public class PairMatchingService {
         List<Crew> crews = crewRepository.findByCourse(course);
 
         List<Pair> newPairList = new ArrayList<>();
-        while (!crews.isEmpty()) {
-            List<Crew> crewsInPair = pairCrew(level, crews); // 크루원 짝짓기
-            crews.removeAll(crewsInPair); // 짝지어진 애들은 삭제
-            newPairList.add(new Pair(crewsInPair)); // 페어 리스트에 추가
+        List<String> crewNameList = crews.stream()
+                .map(Crew::getName)
+                .collect(Collectors.toList());
+
+        // 크루원 짝짓기
+        List<String> shuffled = Randoms.shuffle(crewNameList); // Crew 리스트 셔플하기
+
+        for (int i = 0; i < shuffled.size(); i += 2) {
+            int tryCount = 0;
+            while (tryCount < MAX_TRY) {
+                List<Crew> crewsInPair = new ArrayList<>();
+                tryCount++;
+
+                // 짝짓기
+                crewsInPair.add(findCrewByName(shuffled.get(i)));
+                crewsInPair.add(findCrewByName(shuffled.get(i + 1)));
+                if (crews.size() % 2 == 1 && i == shuffled.size() - 3) { // 만약 3명이 남은 경우 3명이 짝
+                    crewsInPair.add(findCrewByName(shuffled.get(i + 2)));
+                }
+
+                // 앞에서 해당 크루원들이 같은 레벨에서 이미 만난적이 있는지
+                if (!pairMatchingRepository.existByCrewsAndLevel(crewsInPair, level)) { // 없다면
+                    newPairList.add(new Pair(crewsInPair));
+                    break;
+                }
+            }
+
+            if(tryCount == MAX_TRY) { // 최대 횟수 넘으면
+                throw new IllegalArgumentException(NO_MATCHING_NUMBER_OF_CASE_ERROR.getMessage());
+            }
         }
 
         // 저장하기
@@ -60,27 +86,9 @@ public class PairMatchingService {
         return createPairMatchingDto(newPairList);
     }
 
-    private List<Crew> pairCrew(Level level, List<Crew> crews) {
-        int tryCount = 0;
-        while (tryCount < MAX_TRY) {
-            List<Crew> crewsInPair = new ArrayList<>();
-            tryCount++;
-
-            List<Crew> shuffled = Randoms.shuffle(crews); // Crew 리스트 셔플하기
-
-            // 짝짓기
-            crewsInPair.add(shuffled.get(0));
-            crewsInPair.add(shuffled.get(1));
-            if(crews.size() == 3) { // 만약 3명이 남은 경우 3명이 짝
-                crewsInPair.add(shuffled.get(2));
-            }
-
-            // 앞에서 해당 크루원들이 같은 레벨에서 이미 만난적이 있는지
-            if(!pairMatchingRepository.existByCrewsAndLevel(crewsInPair, level)) { // 없다면 반환
-                return crewsInPair;
-            }
-        }
-        throw new IllegalArgumentException(NO_MATCHING_NUMBER_OF_CASE_ERROR.getMessage());
+    private Crew findCrewByName(String name) {
+        return crewRepository.findByName(name)
+                .orElseThrow(() -> new IllegalArgumentException(CREW_NOT_FOUND_ERROR.getMessage()));
     }
 
     private static PairMatchingDto createPairMatchingDto(List<Pair> newPairList) {
