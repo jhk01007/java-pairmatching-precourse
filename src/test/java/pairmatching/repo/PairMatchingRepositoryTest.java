@@ -9,6 +9,7 @@ import pairmatching.domain.*;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -72,6 +73,25 @@ class PairMatchingRepositoryTest {
 
         // then
         assertThat(isExist).isEqualTo(result);
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {
+            "BACKEND,LEVEL1,LOTTO,true",
+            "FRONTEND,LEVEL1,LOTTO,false",
+            "BACKEND,LEVEL2,LOTTO,false",
+            "BACKEND,LEVEL2,PERFORMANCE_IMPROVEMENT,false",
+    })
+    @DisplayName("특정 Course, Level, Mission 조합의 페어 매칭을 조회한다.")
+    public void findByCourseAndLevelAndMission(Course course, Level level, Mission mission, boolean result) throws Exception {
+        // given
+        initPairMatch(Course.BACKEND, Level.LEVEL1, Mission.LOTTO);
+
+        // when
+        Optional<PairMatching> find = pairMatchingRepository.findByCourseAndLevelAndMission(course, level, mission);
+
+        // then
+        assertThat(find.isPresent()).isEqualTo(result);
     }
     private void initPairMatch(Course course, Level level, Mission mission) {
         Crew crew1 = new Crew(course, "crew1");

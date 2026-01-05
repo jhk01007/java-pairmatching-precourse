@@ -5,6 +5,7 @@ import pairmatching.domain.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 
 public class PairMatchingRepository {
 
@@ -46,5 +47,19 @@ public class PairMatchingRepository {
             }
         }
         return false;
+    }
+
+    /**
+     * 특정 과정, 레벨, 미션 조합의 페어 매칭 조회
+     */
+    public Optional<PairMatching> findByCourseAndLevelAndMission(Course course, Level level, Mission mission) {
+        for (PairMatching pairMatching : PAIR_MATCHINGS) {
+            if (pairMatching.getCourse().equals(course) &&
+                    pairMatching.getLevel().equals(level) &&
+                    pairMatching.getMission().equals(mission)) {
+                return Optional.of(pairMatching);
+            }
+        }
+        return Optional.empty();
     }
 }
