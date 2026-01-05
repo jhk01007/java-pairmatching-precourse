@@ -28,6 +28,10 @@ public class OutputView {
         }
     }
 
+    public void printInitDone() {
+        System.out.println("\n초기화 되었습니다.");
+    }
+
     public void printNewLine() {
         System.out.println();
     }

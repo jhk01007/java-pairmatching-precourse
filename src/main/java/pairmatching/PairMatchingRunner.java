@@ -66,11 +66,9 @@ public class PairMatchingRunner {
                 outputView.printMatchingResult(pairMatchingDto); // 출력
 
             } else if (function.equals("3")) {
-
-            } else if (function.equals("Q")) {
-
+                pairMatchingService.initializePairMatching();
+                outputView.printInitDone();
             }
-
             outputView.printNewLine();
         }
     }

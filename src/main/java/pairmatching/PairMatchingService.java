@@ -104,4 +104,11 @@ public class PairMatchingService {
 
         return createPairMatchingDto(pairMatching.getPairs());
     }
+
+    /**
+     * 모든 페어 매칭 초기화
+     */
+    public void initializePairMatching() {
+        pairMatchingRepository.deleteAll();
+    }
 }

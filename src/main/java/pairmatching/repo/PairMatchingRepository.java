@@ -62,4 +62,11 @@ public class PairMatchingRepository {
         }
         return Optional.empty();
     }
+
+    /**
+     * 모든 페어 매칭 삭제
+     */
+    public void deleteAll() {
+        PAIR_MATCHINGS.clear();
+    }
 }
