@@ -30,7 +30,6 @@ class PairMatchingServiceTest {
     })
     @DisplayName("새로운 페어 매칭을 생성한다.")
     public void createPairMatching_success(Course course, Level level, Mission mission, int size) throws Exception {
-        new PairMatchingRepository().deleteAll();
         // when
         PairMatchingDto pairMatchingDto =
                 pairMatchingService.createPairMatching(course, level, mission, false);

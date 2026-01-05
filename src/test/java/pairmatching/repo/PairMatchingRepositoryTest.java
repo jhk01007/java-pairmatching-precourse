@@ -1,5 +1,7 @@
 package pairmatching.repo;
 
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -14,6 +16,11 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class PairMatchingRepositoryTest {
+
+    @AfterEach
+    void tearDown() {
+        pairMatchingRepository.deleteAll();
+    }
 
     private final PairMatchingRepository pairMatchingRepository = new PairMatchingRepository();
     @ParameterizedTest
