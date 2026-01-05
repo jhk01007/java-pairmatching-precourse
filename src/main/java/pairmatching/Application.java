@@ -1,7 +1,13 @@
 package pairmatching;
 
+import pairmatching.view.InputView;
+import pairmatching.view.OutputView;
+
 public class Application {
     public static void main(String[] args) {
-        // TODO 구현 진행
+        new PairMatchingRunner(
+                new InputView(),
+                new OutputView()
+        ).run();
     }
 }
