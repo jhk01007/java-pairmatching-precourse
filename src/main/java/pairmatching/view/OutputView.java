@@ -10,7 +10,7 @@ public class OutputView {
         System.out.println("Q. 종료");
     }
 
-    public void printCourseAndMission() {
+    public void printMissionInfo() {
         System.out.println("\n#############################################");
         System.out.println("과정: 백엔드 | 프론트엔드");
         System.out.println("미션:");
