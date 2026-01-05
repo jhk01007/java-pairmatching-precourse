@@ -32,6 +32,10 @@ public class OutputView {
         System.out.println("\n초기화 되었습니다.");
     }
 
+    public void printErrorMessage(String errorMessage) {
+        System.out.println(errorMessage);
+    }
+
     public void printNewLine() {
         System.out.println();
     }

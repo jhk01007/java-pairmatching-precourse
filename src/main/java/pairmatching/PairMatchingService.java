@@ -65,6 +65,7 @@ public class PairMatchingService {
                 crewsInPair.add(findCrewByName(shuffled.get(i + 1)));
                 if (crews.size() % 2 == 1 && i == shuffled.size() - 3) { // 만약 3명이 남은 경우 3명이 짝
                     crewsInPair.add(findCrewByName(shuffled.get(i + 2)));
+                    i++;
                 }
 
                 // 앞에서 해당 크루원들이 같은 레벨에서 이미 만난적이 있는지

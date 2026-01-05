@@ -28,10 +28,8 @@ public class PairMatchingRunner {
         while (!function.equals("Q")) {
             outputView.printFunctionSelectGuide();
             function = inputView.readFunction();
-            System.out.println();
             if (function.equals("1")) { // 1번 페어 매칭을 선택한 경우
-                String missionInfo = inputView.readMissionInfo(); // 과정, 레벨, 미션 입력
-                MissionInfoDto missionInfoDto = InputParser.parseMissionInfo(missionInfo);
+                MissionInfoDto missionInfoDto = readMissionInfo(); // 미션 정보 입력 받기
 
                 // 기존에 해당조합으로 맺어진 페어가 있는지 확인
                 boolean isExist = pairMatchingService.isExistByCourseAndLevelAndMission(
@@ -41,7 +39,7 @@ public class PairMatchingRunner {
 
                 boolean isRematch = false;
                 if (isExist) { // 있다면, 다시 매칭할거냐고 물어보기
-                    isRematch = InputParser.parseRematchFlag(inputView.readRematching());
+                    isRematch = readRematchFlag();
                 }
 
                 if (isRematch || !isExist) { // 다시 매칭하거나 아예 새로 매칭하는 경우
@@ -55,8 +53,7 @@ public class PairMatchingRunner {
                     outputView.printMatchingResult(pairMatchingDto);
                 }
             } else if (function.equals("2")) {
-                String missionInfo = inputView.readMissionInfo(); // 과정, 레벨, 미션 입력
-                MissionInfoDto missionInfoDto = InputParser.parseMissionInfo(missionInfo);
+                MissionInfoDto missionInfoDto = readMissionInfo(); // 미션 정보 입력
 
                 PairMatchingDto pairMatchingDto = pairMatchingService.findByCourseAndLevelAndMission(
                         Course.of(missionInfoDto.getCourse()),
@@ -71,5 +68,35 @@ public class PairMatchingRunner {
             }
             outputView.printNewLine();
         }
+    }
+
+    private MissionInfoDto readMissionInfo() {
+        while (true) {
+            try {
+                String missionInfo = inputView.readMissionInfo(); // 과정, 레벨, 미션 입력
+                MissionInfoDto missionInfoDto = InputParser.parseMissionInfo(missionInfo);
+                validateMissionInfo(missionInfoDto);
+                return missionInfoDto;
+
+            } catch (IllegalArgumentException e) {
+                outputView.printErrorMessage(e.getMessage());
+            }
+        }
+    }
+
+    private boolean readRematchFlag() {
+        while (true) {
+            try {
+                return InputParser.parseRematchFlag(inputView.readRematching());
+            } catch (IllegalArgumentException e) {
+                outputView.printErrorMessage(e.getMessage());
+            }
+        }
+    }
+
+    private static void validateMissionInfo(MissionInfoDto missionInfoDto) {
+        Course.of(missionInfoDto.getCourse());
+        Level.of(missionInfoDto.getLevel());
+        Mission.of(missionInfoDto.getMission(), Level.of(missionInfoDto.getLevel()));
     }
 }
