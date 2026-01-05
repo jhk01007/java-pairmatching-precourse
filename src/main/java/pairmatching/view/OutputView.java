@@ -1,5 +1,9 @@
 package pairmatching.view;
 
+import pairmatching.dto.PairMatchingDto;
+
+import java.util.List;
+
 public class OutputView {
 
     public void printFunctionSelectGuide() {
@@ -10,15 +14,21 @@ public class OutputView {
         System.out.println("Q. 종료");
     }
 
-    public void printMissionInfo() {
-        System.out.println("\n#############################################");
-        System.out.println("과정: 백엔드 | 프론트엔드");
-        System.out.println("미션:");
-        System.out.println("  - 레벨1: 자동차경주 | 로또 | 숫자야구게임");
-        System.out.println("  - 레벨2: 장바구니 | 결제 | 지하철노선도");
-        System.out.println("  - 레벨3:");
-        System.out.println("  - 레벨4: 성능개선 | 배포");
-        System.out.println("  - 레벨5:");
-        System.out.println("############################################");
+    public void printMatchingResult(PairMatchingDto pairMatchingDto) {
+        System.out.println("\n페어 매칭 결과입니다.");
+        for (List<String> pairMatchingResult : pairMatchingDto.getPairMatchingResults()) {
+            StringBuilder sb = new StringBuilder();
+
+            for (String crewName : pairMatchingResult) {
+                sb.append(crewName);
+                sb.append(" : ");
+            }
+            sb.delete(sb.length() - 3, sb.length());
+            System.out.println(sb);
+        }
+    }
+
+    public void printNewLine() {
+        System.out.println();
     }
 }
